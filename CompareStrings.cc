@@ -21,13 +21,11 @@ int value(string s) {
 		}
 	}
 	
-	//cout<<"for "<<s<<" value = "<<map[lowest_char]<<endl;
-
 	return map[lowest_char];
 }
 
 vector<int> solution (string a, string b) {
-	vector<int> a_values;
+	int freq [11] = {0}; //since max length of each word is 10, there can only be a max of 10 as frequency of lowest character
 
 	int index = 0;
 
@@ -39,12 +37,12 @@ vector<int> solution (string a, string b) {
 		string word = a.substr(previous, current - previous);
 		previous = current+1;
 		current = a.find(",", previous);
-
-		a_values.push_back(value(word));
+		
+		freq[value(word)]++;
 	}
 
 	string word = a.substr(previous, current - previous);
-	a_values.push_back(value(word));
+	freq[value(word)]++;
 
 	current = 0;
 	previous = 0;
@@ -62,19 +60,18 @@ vector<int> solution (string a, string b) {
 
 	words.push_back(b.substr(previous, current - previous));
 
+	//prefix sum array the frequencies as we need to query for sum of all frequencies lower than given frequency
+	for(int i = 1; i < 11; i++) {
+		freq[i] += freq[i-1];
+	}
+
 	vector<int> ans_vector;
 
 	for (string w : words) {
 
 		int val = value(w);
 
-		int ans = 0;
-
-		for (int v : a_values) {
-			if (v < val) ans++;
-		}
-
-		ans_vector.push_back(ans);
+		ans_vector.push_back(freq[val-1]);
 	}
 
 	return ans_vector;
