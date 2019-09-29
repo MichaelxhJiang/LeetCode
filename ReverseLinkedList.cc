@@ -20,4 +20,19 @@ public:
         
         return newHead;
     }
+
+    ListNode* reverseListRecursive(ListNode* head) {
+        if (head == NULL || head->next == NULL) return head;
+        
+        //recursively iterate to last node, work backwards
+        ListNode* newHead = reverseListRecursive(head->next);
+        
+        //make the next node point to this node (reverse the)
+        head->next->next = head;
+        
+        //remove original link
+        head->next = NULL;
+        
+        return newHead;
+    }
 };
