@@ -1,30 +1,30 @@
 class Solution {
 public:
     vector<vector<int>> insert(vector<vector<int>>& intervals, vector<int>& newInterval) {
-        // insert new interval into intervals
-        bool insert = false;
-        for (int i = 0; i < intervals.size(); i++) {
-            if (!insert && intervals[i][0] >= newInterval[0]) {
-                intervals.insert(intervals.begin()+i, newInterval);
-                insert = true;
-                break;
-            }
-        }
-        if (!insert) intervals.push_back(newInterval);
-        
         vector<vector<int>> ans;
-        vector<bool> merged(intervals.size());
-        for (int i = 0; i < intervals.size(); i++) {
-            if (merged[i]) continue;
-            
-            // try to merge with other intervals
-            for (int j = i+1; j < intervals.size(); j++) {
-                if (intervals[i][1] >= intervals[j][0]) {
-                    intervals[i][1] = max(intervals[i][1], intervals[j][1]);
-                    merged[j] = true;
-                }
-            }
+        
+        //add all intervals before new interval
+        int i = 0;
+        while (i < intervals.size() && intervals[i][0] < newInterval[0]) {
             ans.push_back(intervals[i]);
+            i++;
+        }
+        
+        //insert new interval (either merge with previous or push back)
+        if (ans.size() > 0 && ans[ans.size()-1][1] >= newInterval[0]) {
+            ans[ans.size()-1][1] = max(ans[ans.size()-1][1], newInterval[1]);
+        } else {
+            ans.push_back(newInterval);
+        }
+        
+        //for subsequent intervals, either merge or push back
+        while (i < intervals.size()) {
+            if (ans[ans.size()-1][1] >= intervals[i][0]) {
+                ans[ans.size()-1][1] = max(ans[ans.size()-1][1], intervals[i][1]);
+            } else {
+                ans.push_back(intervals[i]);
+            }
+            i++;
         }
         
         return ans;
